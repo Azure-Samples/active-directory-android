@@ -1,5 +1,5 @@
 /*
-Copyright (c) Microsoft Open Technologies, Inc.
+Copyright (c) Microsoft
 All Rights Reserved
 Apache 2.0 License
  
