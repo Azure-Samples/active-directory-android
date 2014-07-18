@@ -39,6 +39,19 @@
       <groupId>com.microsoft.aad</groupId>
       <artifactId>adal</artifactId>
       <version>${adal.version}</version>
+      <type>jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>com.android.support</groupId>
+          <artifactId>${android.support.name}</artifactId>
+        </exclusion>
+      </exclusions>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.microsoft.aad</groupId>
+      <artifactId>adal</artifactId>
+      <version>${adal.version}</version>
       <type>aar</type>
       <exclusions>
         <exclusion>
