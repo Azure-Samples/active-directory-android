@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (c) Microsoft
 All Rights Reserved
 Apache 2.0 License
@@ -20,23 +20,15 @@ See the Apache Version 2.0 License for specific language governing permissions a
 
 package com.microsoft.aad.test.todoapi;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TimeZone;
-
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -78,12 +70,10 @@ import com.google.gson.GsonBuilder;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
-import com.microsoft.aad.adal.AuthenticationSettings;
 import com.microsoft.aad.adal.CacheKey;
 import com.microsoft.aad.adal.DefaultTokenCacheStore;
 import com.microsoft.aad.adal.ITokenCacheStore;
 import com.microsoft.aad.adal.TokenCacheItem;
-import com.microsoft.aad.test.todoapi.R;
 
 public class ToDoActivity extends Activity {
 
