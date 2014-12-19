@@ -34,5 +34,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.2'
     compile('com.microsoft.aad:adal:1.0.6') {
         exclude group: 'com.android.support'
-    } // Recent version is 1.0.6
+    }
 }

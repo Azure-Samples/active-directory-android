@@ -35,18 +35,16 @@ public class Constants {
 
     // -------------------------------AAD
     // PARAMETERS----------------------------------
-    static final String AUTHORITY_URL = "https://login.windows.net/omercantest.onmicrosoft.com";
-
-    static final String CLIENT_ID = "650a6609-5463-4bc4-b7c6-19df7990a8bc";
-
-    static final String RESOURCE_ID = "https://omercantest.onmicrosoft.com/AllHandsTry";
-
-    static final String REDIRECT_URL = "http://taskapp";
-
-    static String USER_HINT = "faruk@omercantest.onmicrosoft.com";
+    public static String AUTHORITY_URL = "https://login.windows.net/common";
+    public static String CLIENT_ID = "e3786e2a-0dcb-449a-8eba-b4042c9bec01";
+    public static String RESOURCE_ID = "https://aadadfs.onmicrosoft.com/TodoListService";
+    public static String REDIRECT_URL = "https://aadadfstodolistservice.azurewebsites.net";
+    public static String USER_HINT = "";
+    public static String EXTRA_QP = "";
+    public static boolean FULL_SCREEN = true;
 
     // Endpoint we are targeting for the deployed WebAPI service
-    static final String SERVICE_URL = "https://android.azurewebsites.net";
+    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net";
 
     // ------------------------------------------------------------------------------------------
 
@@ -55,7 +53,6 @@ public class Constants {
     public static final String SHARED_PREFERENCE_NAME = "com.example.com.test.settings";
 
     public static final String KEY_NAME_ASK_BROKER_INSTALL = "test.settings.ask.broker";
-
     public static final String KEY_NAME_CHECK_BROKER = "test.settings.check.broker";
 
 }

@@ -187,6 +187,7 @@ public class ToDoActivity extends Activity {
                     false);
             mAuthContext.acquireToken(ToDoActivity.this, Constants.RESOURCE_ID,
                     Constants.CLIENT_ID, Constants.REDIRECT_URL, Constants.USER_HINT,
+                    "nux=1&"+Constants.EXTRA_QP,
                     new AuthenticationCallback<AuthenticationResult>() {
 
                         @Override
@@ -323,7 +324,7 @@ public class ToDoActivity extends Activity {
 
         // one of the acquireToken overloads
         mAuthContext.acquireToken(ToDoActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
-                Constants.REDIRECT_URL, Constants.USER_HINT, callback);
+                Constants.REDIRECT_URL, Constants.USER_HINT, "nux=1&"+Constants.EXTRA_QP, callback);
         mLastRequestId = callback.hashCode();
     }
 

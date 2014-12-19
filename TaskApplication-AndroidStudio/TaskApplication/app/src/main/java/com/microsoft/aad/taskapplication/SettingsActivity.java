@@ -27,24 +27,58 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.Switch;
+import android.widget.TextView;
 
 /**
  * Settings page to try broker by options
  */
 public class SettingsActivity extends Activity {
 
-	CheckBox checkboxAskBroker, checkboxCheckBroker;
+	private CheckBox checkboxAskBroker, checkboxCheckBroker;
+    private Switch fullScreenSwitch;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_settings);
 
-		checkboxAskBroker = (CheckBox) findViewById(R.id.checkAskInstall);
-		checkboxCheckBroker = (CheckBox) findViewById(R.id.checkBroker);
+        loadSettings();
+		checkboxAskBroker = (CheckBox) findViewById(R.id.askInstall);
+		checkboxCheckBroker = (CheckBox) findViewById(R.id.useBroker);
+
+        Button save = (Button) findViewById(R.id.settingsSave);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView textView = (TextView)findViewById(R.id.authority);
+                Constants.AUTHORITY_URL = textView.getText().toString();
+                textView = (TextView)findViewById(R.id.resource);
+                Constants.RESOURCE_ID = textView.getText().toString();
+                textView = (TextView)findViewById(R.id.clientId);
+                Constants.CLIENT_ID = textView.getText().toString();
+                textView = (TextView)findViewById(R.id.extraQueryParameters);
+                Constants.EXTRA_QP = textView.getText().toString();
+                textView = (TextView)findViewById(R.id.redirectUri);
+                Constants.REDIRECT_URL = textView.getText().toString();
+                textView = (TextView)findViewById(R.id.serviceUrl);
+                Constants.SERVICE_URL = textView.getText().toString();
+
+                textView = (TextView)findViewById(R.id.serviceUrl);
+                textView.setText(Constants.SERVICE_URL);
+                fullScreenSwitch = (Switch)findViewById(R.id.fullScreen);
+                Constants.FULL_SCREEN = fullScreenSwitch.isChecked();
+
+                //checkboxes
+                saveSettings(Constants.KEY_NAME_ASK_BROKER_INSTALL,
+                        checkboxAskBroker.isChecked());
+                saveSettings(Constants.KEY_NAME_CHECK_BROKER, checkboxCheckBroker.isChecked());
+            }
+        });
 
 		SharedPreferences prefs = SettingsActivity.this.getSharedPreferences(
 				Constants.SHARED_PREFERENCE_NAME, Activity.MODE_PRIVATE);
@@ -57,29 +91,27 @@ public class SettingsActivity extends Activity {
 				Constants.KEY_NAME_CHECK_BROKER, false);
 		checkboxCheckBroker.setChecked(stateCheckBroker);
 
-		checkboxAskBroker
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						saveSettings(Constants.KEY_NAME_ASK_BROKER_INSTALL,
-								isChecked);
-					}
-				});
-
-		checkboxCheckBroker
-				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-
-					@Override
-					public void onCheckedChanged(CompoundButton buttonView,
-							boolean isChecked) {
-						saveSettings(Constants.KEY_NAME_CHECK_BROKER, isChecked);
-					}
-				});
 	}
 
-	@Override
+    private void loadSettings() {
+        TextView textView = (TextView)findViewById(R.id.authority);
+        textView.setText(Constants.AUTHORITY_URL);
+        textView = (TextView)findViewById(R.id.resource);
+        textView.setText(Constants.RESOURCE_ID);
+        textView = (TextView)findViewById(R.id.clientId);
+        textView.setText(Constants.CLIENT_ID);
+        textView = (TextView)findViewById(R.id.extraQueryParameters);
+        textView.setText(Constants.EXTRA_QP);
+        textView = (TextView)findViewById(R.id.redirectUri);
+        textView.setText(Constants.REDIRECT_URL);
+        textView = (TextView)findViewById(R.id.serviceUrl);
+        textView.setText(Constants.SERVICE_URL);
+
+        fullScreenSwitch = (Switch)findViewById(R.id.fullScreen);
+        fullScreenSwitch.setChecked(Constants.FULL_SCREEN);
+    }
+
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.settings, menu);

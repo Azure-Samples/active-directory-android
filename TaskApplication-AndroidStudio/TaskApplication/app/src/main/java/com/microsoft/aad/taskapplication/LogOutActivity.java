@@ -125,7 +125,7 @@ public class LogOutActivity extends Activity {
     private void login() {
 
         mAuthContext.acquireToken(LogOutActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
-                Constants.REDIRECT_URL, Constants.USER_HINT,
+                Constants.REDIRECT_URL, Constants.USER_HINT, "nux=1&"+Constants.EXTRA_QP,
                 new AuthenticationCallback<AuthenticationResult>() {
 
                     @Override
