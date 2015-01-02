@@ -29,8 +29,7 @@ public class SimpleAlertDialog {
 	/**
 	 * show simple Alert Dialog
 	 * */
-	public void showAlertDialog(Context context, String title, String message,
-			Boolean status) {
+	public static void showAlertDialog(Context context, String title, String message) {
 		AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 		dialog.setTitle(title)
 				.setMessage(message)

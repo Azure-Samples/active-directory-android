@@ -18,9 +18,7 @@ Apache 2.0 License
 See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
  */
 
-package com.microsoft.aad.taskapplication;
-
-import java.util.Date;
+package com.microsoft.aad.taskapplication.helpers;
 
 /**
  * Represents an item in a ToDo list
@@ -42,14 +40,8 @@ public class WorkItem {
 	/**
 	 * Indicates if the item is completed
 	 */
-	@com.google.gson.annotations.SerializedName("Complete")
-	private boolean mComplete;
-
-	/**
-	 * Indicates if the item is completed
-	 */
-	@com.google.gson.annotations.SerializedName("DueDate")
-	private Date mDue;
+	@com.google.gson.annotations.SerializedName("Owner")
+	private String mComplete;
 
 	/**
 	 * WorkItem constructor
@@ -110,30 +102,9 @@ public class WorkItem {
 		mId = id;
 	}
 
-	/**
-	 * Indicates if the item is marked as completed
-	 */
-	public boolean isComplete() {
-		return mComplete;
-	}
-
-	/**
-	 * Marks the item as completed or incompleted
-	 */
-	public void setComplete(boolean complete) {
-		mComplete = complete;
-	}
-
 	@Override
 	public boolean equals(Object o) {
 		return o instanceof WorkItem && ((WorkItem) o).mId == mId;
 	}
 
-	public Date getDueDate() {
-		return mDue;
-	}
-
-	public void setDueDate(Date mDue) {
-		this.mDue = mDue;
-	}
 }

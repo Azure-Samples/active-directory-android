@@ -18,27 +18,34 @@ Apache 2.0 License
 See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
  */
 
-package com.microsoft.aad.taskapplication;
+package com.microsoft.aad.taskapplication.helpers;
 
-import com.microsoft.aad.taskapplication.R;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
-import android.os.Bundle;
-import android.app.Activity;
-import android.view.Menu;
+public class Connection {
 
-public class FeedActivity extends Activity {
+	private Context mContext;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_feed);
+	public Connection(Context context) {
+		this.mContext = context;
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.feed, menu);
-		return true;
+    /**
+     * Check connection
+     **/
+	public boolean isConnectingToInternet() {
+		ConnectivityManager connectivity = (ConnectivityManager) mContext
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (connectivity != null) {
+			NetworkInfo[] info = connectivity.getAllNetworkInfo();
+			if (info != null)
+				for (int i = 0; i < info.length; i++)
+					if (info[i].getState() == NetworkInfo.State.CONNECTED) {
+						return true;
+					}
+		}
+		return false;
 	}
-
 }

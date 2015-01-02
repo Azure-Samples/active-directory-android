@@ -18,7 +18,9 @@ Apache 2.0 License
 See the Apache Version 2.0 License for specific language governing permissions and limitations under the License.
  */
 
-package com.microsoft.aad.taskapplication;
+package com.microsoft.aad.taskapplication.helpers;
+
+import com.microsoft.aad.adal.AuthenticationResult;
 
 public class Constants {
 
@@ -42,9 +44,9 @@ public class Constants {
     public static String USER_HINT = "";
     public static String EXTRA_QP = "";
     public static boolean FULL_SCREEN = true;
-
+    public static AuthenticationResult CURRENT_RESULT = null;
     // Endpoint we are targeting for the deployed WebAPI service
-    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net";
+    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net/api/todoservice";
 
     // ------------------------------------------------------------------------------------------
 

@@ -9,8 +9,9 @@
     <string name="checkbox_text">Item Text</string>
     <string name="app_detail">Demo app for WebAPI and ADAL usage. Please login with your AAD tenant login.</string>
     <string name="title_activity_log_out">Tiny TODO LogOut</string>
-    <string name="title_activity_feed">FeedActivity</string>
+    <string name="title_activity_feed">Users List</string>
     <string name="title_activity_settings">ADAL settings for testing</string>
+    <string name="title_activity_add_Task">Add Task</string>
     <string name="title_login_hello_app">WebAPI Login</string>
 
 </resources>

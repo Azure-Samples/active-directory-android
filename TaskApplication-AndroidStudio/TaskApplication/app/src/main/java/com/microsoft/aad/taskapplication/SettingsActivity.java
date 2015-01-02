@@ -20,8 +20,6 @@ See the Apache Version 2.0 License for specific language governing permissions a
 
 package com.microsoft.aad.taskapplication;
 
-import com.microsoft.aad.taskapplication.R;
-
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -32,6 +30,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import com.microsoft.aad.taskapplication.helpers.Constants;
 
 /**
  * Settings page to try broker by options
@@ -77,6 +77,7 @@ public class SettingsActivity extends Activity {
                 saveSettings(Constants.KEY_NAME_ASK_BROKER_INSTALL,
                         checkboxAskBroker.isChecked());
                 saveSettings(Constants.KEY_NAME_CHECK_BROKER, checkboxCheckBroker.isChecked());
+                finish();
             }
         });
 
@@ -110,13 +111,6 @@ public class SettingsActivity extends Activity {
         fullScreenSwitch = (Switch)findViewById(R.id.fullScreen);
         fullScreenSwitch.setChecked(Constants.FULL_SCREEN);
     }
-
-    @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.settings, menu);
-		return true;
-	}
 
 	private void saveSettings(String key, boolean value) {
 		SharedPreferences prefs = SettingsActivity.this.getSharedPreferences(
