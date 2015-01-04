@@ -1,16 +1,30 @@
 package com.microsoft.aad.taskapplication;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationContext;
+import com.microsoft.aad.adal.AuthenticationResult;
+import com.microsoft.aad.adal.ITokenStoreQuery;
+import com.microsoft.aad.adal.PromptBehavior;
+import com.microsoft.aad.adal.TokenCacheItem;
 import com.microsoft.aad.taskapplication.helpers.Constants;
+import com.microsoft.aad.taskapplication.helpers.InMemoryCacheStore;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class UsersListActivity extends Activity {
-
+    AuthenticationContext mAuthContext;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,18 +42,77 @@ public class UsersListActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //call adal
+
+                mAuthContext = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL,
+                        false, InMemoryCacheStore.getInstance());
+                mAuthContext.acquireToken(UsersListActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
+                        Constants.REDIRECT_URL, Constants.USER_HINT, PromptBehavior.REFRESH_SESSION,
+                        "nux=1" + Constants.EXTRA_QP, new AuthenticationCallback<AuthenticationResult>() {
+
+                            @Override
+                            public void onSuccess(AuthenticationResult result) {
+                                Constants.CURRENT_RESULT = result;
+                                finish();
+                                startActivity(getIntent());
+                            }
+
+                            @Override
+                            public void onError(Exception exc) {
+                                SimpleAlertDialog.showAlertDialog(UsersListActivity.this, "Exception caught", exc.getMessage());
+                            }
+                        });
             }
         });
+
+        ListView listview = (ListView) findViewById(R.id.usersList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, refreshedUsersList());
+        listview.setAdapter(adapter);
+
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    int position, long id) {
+                final String item = (String) parent.getItemAtPosition(position);
+                //call adal
+                Toast.makeText(UsersListActivity.this, item, Toast.LENGTH_LONG);
+            }
+
+        });
+    }
+
+    private List<String> refreshedUsersList() {
+        AuthenticationContext ctx = null;
+        List<String> list = new ArrayList<>();
+        ctx = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL,
+                false, InMemoryCacheStore.getInstance());
+        ITokenStoreQuery cacheStoreQuery = (ITokenStoreQuery) ctx.getCache();
+        Iterator<TokenCacheItem> iter = cacheStoreQuery.getAll();
+        while (iter.hasNext()) {
+            TokenCacheItem item = iter.next();
+            if (item.getUserInfo() != null && !list.contains(item.getUserInfo().getDisplayableId())) {
+                list.add(item.getUserInfo().getDisplayableId());
+            }
+        }
+        return list;
     }
 
     private void callAdal() {
         try {
             AuthenticationContext ctx = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL, false);
-
+            //ctx.acquireToken();
         } catch (Exception e) {
             Toast.makeText(getApplicationContext(), "Encryption is failed", Toast.LENGTH_SHORT)
                     .show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (mAuthContext != null) {
+            mAuthContext.onActivityResult(requestCode, resultCode, data);
         }
     }
 }

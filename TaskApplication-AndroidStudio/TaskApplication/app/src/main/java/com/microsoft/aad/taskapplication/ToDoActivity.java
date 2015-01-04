@@ -28,16 +28,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.taskapplication.helpers.Constants;
-import com.microsoft.aad.taskapplication.helpers.WorkItem;
+import com.microsoft.aad.taskapplication.helpers.InMemoryCacheStore;
 import com.microsoft.aad.taskapplication.helpers.WorkItemAdapter;
 
 import java.net.MalformedURLException;
@@ -70,30 +69,29 @@ public class ToDoActivity extends Activity {
         Toast.makeText(getApplicationContext(), TAG + "LifeCycle: OnCreate", Toast.LENGTH_SHORT)
                 .show();
 
-
-        Button button = (Button)findViewById(R.id.switchUserButton);
+        Button button = (Button) findViewById(R.id.switchUserButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ToDoActivity.this , UsersListActivity.class);
+                Intent intent = new Intent(ToDoActivity.this, UsersListActivity.class);
                 startActivity(intent);
             }
         });
 
-        button = (Button)findViewById(R.id.addTaskButton);
+        button = (Button) findViewById(R.id.addTaskButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ToDoActivity.this , UsersListActivity.class);
+                Intent intent = new Intent(ToDoActivity.this, AddTaskActivity.class);
                 startActivity(intent);
             }
         });
 
-        button = (Button)findViewById(R.id.appSettingsButton);
+        button = (Button) findViewById(R.id.appSettingsButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ToDoActivity.this , SettingsActivity.class);
+                Intent intent = new Intent(ToDoActivity.this, SettingsActivity.class);
                 startActivity(intent);
             }
         });
@@ -105,10 +103,11 @@ public class ToDoActivity extends Activity {
         // Ask for token and provide callback
         try {
             mAuthContext = new AuthenticationContext(ToDoActivity.this, Constants.AUTHORITY_URL,
-                    false);
+                    false, InMemoryCacheStore.getInstance());
+            mAuthContext.getCache().removeAll();
             mAuthContext.acquireToken(ToDoActivity.this, Constants.RESOURCE_ID,
                     Constants.CLIENT_ID, Constants.REDIRECT_URL, Constants.USER_HINT,
-                    "nux=1&"+Constants.EXTRA_QP,
+                    "nux=1&" + Constants.EXTRA_QP,
                     new AuthenticationCallback<AuthenticationResult>() {
 
                         @Override
@@ -116,10 +115,8 @@ public class ToDoActivity extends Activity {
                             if (mLoginProgressDialog.isShowing()) {
                                 mLoginProgressDialog.dismiss();
                             }
-                            Toast.makeText(getApplicationContext(),
-                                    TAG + "getToken Error:" + exc.getMessage(), Toast.LENGTH_SHORT)
-                                    .show();
-                            //TODO: popup error alert
+                            SimpleAlertDialog.showAlertDialog(ToDoActivity.this,
+                                    "Failed to get token", exc.getMessage());
                         }
 
                         @Override
@@ -130,7 +127,7 @@ public class ToDoActivity extends Activity {
 
                             if (result != null && !result.getAccessToken().isEmpty()) {
                                 setLocalToken(result);
-                                sendRequest();
+                                updateLoggedInUser();
                             } else {
                                 //TODO: popup error alert
                             }
@@ -141,6 +138,19 @@ public class ToDoActivity extends Activity {
         }
         Toast.makeText(getApplicationContext(), TAG + "done", Toast.LENGTH_SHORT).show();
     }
+
+    private void updateLoggedInUser() {
+        TextView textView = (TextView) findViewById(R.id.userLoggedIn);
+        textView.setText("N/A");
+        if (Constants.CURRENT_RESULT != null) {
+            if (Constants.CURRENT_RESULT.getIdToken() != null) {
+                textView.setText(Constants.CURRENT_RESULT.getUserInfo().getDisplayableId());
+            } else {
+                textView.setText("User with No ID Token");
+            }
+        }
+    }
+
 
     private void sendRequest() {
         if (Constants.CURRENT_RESULT == null || Constants.CURRENT_RESULT.getAccessToken().isEmpty())
@@ -168,7 +178,7 @@ public class ToDoActivity extends Activity {
 
             // Create an adapter to bind the items with the view
             //mAdapter = new WorkItemAdapter(ToDoActivity.this, R.layout.listViewToDo);
-            ListView listViewToDo = (ListView)findViewById(R.id.listViewToDo);
+            ListView listViewToDo = (ListView) findViewById(R.id.listViewToDo);
             listViewToDo.setAdapter(mAdapter);
 
         } catch (Exception e) {
@@ -181,7 +191,7 @@ public class ToDoActivity extends Activity {
 
         // one of the acquireToken overloads
         mAuthContext.acquireToken(ToDoActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
-                Constants.REDIRECT_URL, Constants.USER_HINT, "nux=1&"+Constants.EXTRA_QP, callback);
+                Constants.REDIRECT_URL, Constants.USER_HINT, "nux=1&" + Constants.EXTRA_QP, callback);
     }
 
     private AuthenticationResult getLocalToken() {
@@ -196,6 +206,7 @@ public class ToDoActivity extends Activity {
     public void onResume() {
         super.onResume(); // Always call the superclass method first
 
+        updateLoggedInUser();
         // User can click logout, it will come back here
         // It should refresh list again
         sendRequest();
@@ -246,9 +257,9 @@ public class ToDoActivity extends Activity {
 
     /**
      * Creates a dialog and shows it
-     * 
+     *
      * @param exception The exception to show in the dialog
-     * @param title The dialog title
+     * @param title     The dialog title
      */
     private void createAndShowDialog(Exception exception, String title) {
         createAndShowDialog(exception.toString(), title);
@@ -256,9 +267,9 @@ public class ToDoActivity extends Activity {
 
     /**
      * Creates a dialog and shows it
-     * 
+     *
      * @param message The dialog message
-     * @param title The dialog title
+     * @param title   The dialog title
      */
     private void createAndShowDialog(String message, String title) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
