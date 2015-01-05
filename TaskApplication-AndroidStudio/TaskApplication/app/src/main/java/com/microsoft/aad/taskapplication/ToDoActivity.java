@@ -27,6 +27,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,10 +38,13 @@ import com.microsoft.aad.adal.AuthenticationContext;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.taskapplication.helpers.Constants;
 import com.microsoft.aad.taskapplication.helpers.InMemoryCacheStore;
+import com.microsoft.aad.taskapplication.helpers.TodoListHttpService;
 import com.microsoft.aad.taskapplication.helpers.WorkItemAdapter;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ToDoActivity extends Activity {
 
@@ -128,6 +132,7 @@ public class ToDoActivity extends Activity {
                             if (result != null && !result.getAccessToken().isEmpty()) {
                                 setLocalToken(result);
                                 updateLoggedInUser();
+                                getTasks();
                             } else {
                                 //TODO: popup error alert
                             }
@@ -152,11 +157,21 @@ public class ToDoActivity extends Activity {
     }
 
 
-    private void sendRequest() {
+    private void getTasks() {
         if (Constants.CURRENT_RESULT == null || Constants.CURRENT_RESULT.getAccessToken().isEmpty())
             return;
 
-        refreshItemsFromTable();
+        List<String> items = new ArrayList<>();
+        try {
+            items = new TodoListHttpService().getAllItems(Constants.CURRENT_RESULT.getAccessToken());
+        } catch (Exception e) {
+            items = new ArrayList<>();
+        }
+
+        ListView listview = (ListView) findViewById(R.id.listViewToDo);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_list_item_1, android.R.id.text1, items);
+        listview.setAdapter(adapter);
     }
 
     private URL getEndpointUrl() {
@@ -209,44 +224,7 @@ public class ToDoActivity extends Activity {
         updateLoggedInUser();
         // User can click logout, it will come back here
         // It should refresh list again
-        sendRequest();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Toast.makeText(getApplicationContext(), TAG + "LifeCycle: OnDestroy", Toast.LENGTH_SHORT)
-                .show();
-
-    }
-
-    public void refreshItem(View view) {
-        // Load the items from the Mobile Service
-        refreshItemsFromTable();
-    }
-
-    /**
-     * Refresh the list with the items in the Mobile Service Table
-     */
-    private void refreshItemsFromTable() {
-
+        getTasks();
     }
 
     @Override

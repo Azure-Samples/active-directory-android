@@ -24,11 +24,15 @@ import java.util.Iterator;
 import java.util.List;
 
 public class UsersListActivity extends Activity {
-    AuthenticationContext mAuthContext;
+
+    private AuthenticationContext mAuthContext;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users_list);
+        mAuthContext= new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL,
+                false, InMemoryCacheStore.getInstance());
 
         Button button = (Button) findViewById(R.id.userListCancelButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -42,9 +46,6 @@ public class UsersListActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                mAuthContext = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL,
-                        false, InMemoryCacheStore.getInstance());
                 mAuthContext.acquireToken(UsersListActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
                         Constants.REDIRECT_URL, Constants.USER_HINT, PromptBehavior.REFRESH_SESSION,
                         "nux=1" + Constants.EXTRA_QP, new AuthenticationCallback<AuthenticationResult>() {
@@ -75,19 +76,15 @@ public class UsersListActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, final View view,
                                     int position, long id) {
                 final String item = (String) parent.getItemAtPosition(position);
-                //call adal
-                Toast.makeText(UsersListActivity.this, item, Toast.LENGTH_LONG);
+                callAdal(item);
             }
 
         });
     }
 
     private List<String> refreshedUsersList() {
-        AuthenticationContext ctx = null;
         List<String> list = new ArrayList<>();
-        ctx = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL,
-                false, InMemoryCacheStore.getInstance());
-        ITokenStoreQuery cacheStoreQuery = (ITokenStoreQuery) ctx.getCache();
+        ITokenStoreQuery cacheStoreQuery = InMemoryCacheStore.getInstance();
         Iterator<TokenCacheItem> iter = cacheStoreQuery.getAll();
         while (iter.hasNext()) {
             TokenCacheItem item = iter.next();
@@ -98,14 +95,22 @@ public class UsersListActivity extends Activity {
         return list;
     }
 
-    private void callAdal() {
-        try {
-            AuthenticationContext ctx = new AuthenticationContext(UsersListActivity.this, Constants.AUTHORITY_URL, false);
-            //ctx.acquireToken();
-        } catch (Exception e) {
-            Toast.makeText(getApplicationContext(), "Encryption is failed", Toast.LENGTH_SHORT)
-                    .show();
-        }
+    private void callAdal(String user) {
+        mAuthContext.acquireToken(UsersListActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
+                Constants.REDIRECT_URL, user, PromptBehavior.REFRESH_SESSION,
+                "nux=1&" + Constants.EXTRA_QP, new AuthenticationCallback<AuthenticationResult>() {
+
+                    @Override
+                    public void onSuccess(AuthenticationResult result) {
+                        Constants.CURRENT_RESULT = result;
+                        finish();
+                    }
+
+                    @Override
+                    public void onError(Exception exc) {
+                        SimpleAlertDialog.showAlertDialog(UsersListActivity.this, "Exception caught", exc.getMessage());
+                    }
+                });
     }
 
     @Override

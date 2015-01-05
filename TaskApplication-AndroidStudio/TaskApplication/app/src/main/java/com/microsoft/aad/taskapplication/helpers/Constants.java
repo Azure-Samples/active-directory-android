@@ -46,7 +46,7 @@ public class Constants {
     public static boolean FULL_SCREEN = true;
     public static AuthenticationResult CURRENT_RESULT = null;
     // Endpoint we are targeting for the deployed WebAPI service
-    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net/api/todoservice";
+    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net/api/todolist";
 
     // ------------------------------------------------------------------------------------------
 
