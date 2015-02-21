@@ -41,6 +41,7 @@ public class Constants {
     public static String CLIENT_ID = "e3786e2a-0dcb-449a-8eba-b4042c9bec01";
     public static String RESOURCE_ID = "https://aadadfs.onmicrosoft.com/TodoListService";
     public static String REDIRECT_URL = "https://aadadfstodolistservice.azurewebsites.net";
+    public static String CORRELATION_ID = "";
     public static String USER_HINT = "";
     public static String EXTRA_QP = "";
     public static boolean FULL_SCREEN = true;

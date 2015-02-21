@@ -56,19 +56,28 @@ public class SettingsActivity extends Activity {
             public void onClick(View v) {
                 TextView textView = (TextView)findViewById(R.id.authority);
                 Constants.AUTHORITY_URL = textView.getText().toString();
+
                 textView = (TextView)findViewById(R.id.resource);
                 Constants.RESOURCE_ID = textView.getText().toString();
+
                 textView = (TextView)findViewById(R.id.clientId);
                 Constants.CLIENT_ID = textView.getText().toString();
+
                 textView = (TextView)findViewById(R.id.extraQueryParameters);
                 Constants.EXTRA_QP = textView.getText().toString();
+
                 textView = (TextView)findViewById(R.id.redirectUri);
                 Constants.REDIRECT_URL = textView.getText().toString();
+
                 textView = (TextView)findViewById(R.id.serviceUrl);
                 Constants.SERVICE_URL = textView.getText().toString();
 
                 textView = (TextView)findViewById(R.id.serviceUrl);
                 textView.setText(Constants.SERVICE_URL);
+
+                textView = (TextView)findViewById(R.id.correlationId);
+                textView.setText(Constants.CORRELATION_ID);
+
                 fullScreenSwitch = (Switch)findViewById(R.id.fullScreen);
                 Constants.FULL_SCREEN = fullScreenSwitch.isChecked();
 
@@ -106,6 +115,8 @@ public class SettingsActivity extends Activity {
         textView.setText(Constants.REDIRECT_URL);
         textView = (TextView)findViewById(R.id.serviceUrl);
         textView.setText(Constants.SERVICE_URL);
+        textView = (TextView)findViewById(R.id.correlationId);
+        textView.setText(Constants.CORRELATION_ID);
 
         fullScreenSwitch = (Switch)findViewById(R.id.fullScreen);
         fullScreenSwitch.setChecked(Constants.FULL_SCREEN);

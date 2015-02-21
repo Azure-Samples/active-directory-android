@@ -45,6 +45,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class ToDoActivity extends Activity {
 
@@ -109,6 +110,12 @@ public class ToDoActivity extends Activity {
             mAuthContext = new AuthenticationContext(ToDoActivity.this, Constants.AUTHORITY_URL,
                     false, InMemoryCacheStore.getInstance());
             mAuthContext.getCache().removeAll();
+
+            if(Constants.CORRELATION_ID != null &&
+                    Constants.CORRELATION_ID.trim().length() !=0){
+                mAuthContext.setRequestCorrelationId(UUID.fromString(Constants.CORRELATION_ID));
+            }
+
             mAuthContext.acquireToken(ToDoActivity.this, Constants.RESOURCE_ID,
                     Constants.CLIENT_ID, Constants.REDIRECT_URL, Constants.USER_HINT,
                     "nux=1&" + Constants.EXTRA_QP,

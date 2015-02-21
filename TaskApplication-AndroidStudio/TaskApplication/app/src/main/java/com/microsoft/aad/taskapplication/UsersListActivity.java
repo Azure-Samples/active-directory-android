@@ -22,6 +22,7 @@ import com.microsoft.aad.taskapplication.helpers.InMemoryCacheStore;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
 public class UsersListActivity extends Activity {
 
@@ -46,6 +47,11 @@ public class UsersListActivity extends Activity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                if(Constants.CORRELATION_ID != null &&
+                        Constants.CORRELATION_ID.trim().length() !=0){
+                    mAuthContext.setRequestCorrelationId(UUID.fromString(Constants.CORRELATION_ID));
+                }
                 mAuthContext.acquireToken(UsersListActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
                         Constants.REDIRECT_URL, Constants.USER_HINT, PromptBehavior.REFRESH_SESSION,
                         "nux=1" + Constants.EXTRA_QP, new AuthenticationCallback<AuthenticationResult>() {
@@ -96,6 +102,11 @@ public class UsersListActivity extends Activity {
     }
 
     private void callAdal(String user) {
+        if(Constants.CORRELATION_ID != null &&
+                Constants.CORRELATION_ID.trim().length() !=0){
+            mAuthContext.setRequestCorrelationId(UUID.fromString(Constants.CORRELATION_ID));
+        }
+
         mAuthContext.acquireToken(UsersListActivity.this, Constants.RESOURCE_ID, Constants.CLIENT_ID,
                 Constants.REDIRECT_URL, user, PromptBehavior.REFRESH_SESSION,
                 "nux=1&" + Constants.EXTRA_QP, new AuthenticationCallback<AuthenticationResult>() {
