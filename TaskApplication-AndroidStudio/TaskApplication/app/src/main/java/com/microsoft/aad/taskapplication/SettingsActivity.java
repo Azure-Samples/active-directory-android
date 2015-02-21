@@ -37,7 +37,7 @@ import com.microsoft.aad.taskapplication.helpers.Constants;
  */
 public class SettingsActivity extends Activity {
 
-	private CheckBox checkboxAskBroker, checkboxCheckBroker;
+	//private CheckBox checkboxAskBroker, checkboxCheckBroker;
     private Switch fullScreenSwitch;
 
 	@Override
@@ -46,8 +46,8 @@ public class SettingsActivity extends Activity {
 		setContentView(R.layout.activity_settings);
 
         loadSettings();
-		checkboxAskBroker = (CheckBox) findViewById(R.id.askInstall);
-		checkboxCheckBroker = (CheckBox) findViewById(R.id.useBroker);
+//		checkboxAskBroker = (CheckBox) findViewById(R.id.askInstall);
+//		checkboxCheckBroker = (CheckBox) findViewById(R.id.useBroker);
 
         Button save = (Button) findViewById(R.id.settingsSave);
 
@@ -82,23 +82,23 @@ public class SettingsActivity extends Activity {
                 Constants.FULL_SCREEN = fullScreenSwitch.isChecked();
 
                 //checkboxes
-                saveSettings(Constants.KEY_NAME_ASK_BROKER_INSTALL,
-                        checkboxAskBroker.isChecked());
-                saveSettings(Constants.KEY_NAME_CHECK_BROKER, checkboxCheckBroker.isChecked());
+//                saveSettings(Constants.KEY_NAME_ASK_BROKER_INSTALL,
+//                        checkboxAskBroker.isChecked());
+//                saveSettings(Constants.KEY_NAME_CHECK_BROKER, checkboxCheckBroker.isChecked());
                 finish();
             }
         });
 
-		SharedPreferences prefs = SettingsActivity.this.getSharedPreferences(
-				Constants.SHARED_PREFERENCE_NAME, Activity.MODE_PRIVATE);
-
-		boolean stateAskBrokerInstall = prefs.getBoolean(
-				Constants.KEY_NAME_ASK_BROKER_INSTALL, false);
-		checkboxAskBroker.setChecked(stateAskBrokerInstall);
-
-		boolean stateCheckBroker = prefs.getBoolean(
-				Constants.KEY_NAME_CHECK_BROKER, false);
-		checkboxCheckBroker.setChecked(stateCheckBroker);
+//		SharedPreferences prefs = SettingsActivity.this.getSharedPreferences(
+//				Constants.SHARED_PREFERENCE_NAME, Activity.MODE_PRIVATE);
+//
+//		boolean stateAskBrokerInstall = prefs.getBoolean(
+//				Constants.KEY_NAME_ASK_BROKER_INSTALL, false);
+//		checkboxAskBroker.setChecked(stateAskBrokerInstall);
+//
+//		boolean stateCheckBroker = prefs.getBoolean(
+//				Constants.KEY_NAME_CHECK_BROKER, false);
+//		checkboxCheckBroker.setChecked(stateCheckBroker);
 
 	}
 

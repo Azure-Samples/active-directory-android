@@ -13,176 +13,174 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/scrollView" >
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true">
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Authority"
+                android:id="@+id/textView"
+                android:textAlignment="center" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/authority"
+                android:layout_gravity="center_horizontal"
+                android:layout_alignParentTop="true"
+                android:layout_toEndOf="@+id/textView4"
+                android:layout_toRightOf="@+id/textView4" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Client ID"
+                android:id="@+id/textView4"
+                android:layout_below="@+id/authority"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:textAlignment="center" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/clientId"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/authority"
+                android:layout_alignLeft="@+id/authority"
+                android:layout_alignStart="@+id/authority" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Resource"
+                android:id="@+id/textView5"
+                android:textAlignment="center"
+                android:layout_below="@+id/clientId"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/resource"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/clientId"
+                android:layout_alignLeft="@+id/clientId"
+                android:layout_alignStart="@+id/clientId" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Redirect URI"
+                android:id="@+id/textView6"
+                android:textAlignment="center"
+                android:layout_below="@+id/resource"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/redirectUri"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/resource"
+                android:layout_toRightOf="@+id/textView6"
+                android:layout_toEndOf="@+id/textView6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Extra QP"
+                android:id="@+id/textView7"
+                android:textAlignment="center"
+                android:layout_below="@+id/redirectUri"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/extraQueryParameters"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/redirectUri"
+                android:layout_alignLeft="@+id/resource"
+                android:layout_alignStart="@+id/resource" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="TODO Service"
+                android:id="@+id/textView8"
+                android:textAlignment="center"
+                android:layout_below="@+id/extraQueryParameters"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/serviceUrl"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/extraQueryParameters"
+                android:layout_toRightOf="@+id/textView8"
+                android:layout_toEndOf="@+id/textView8" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Correlation ID"
+                android:id="@+id/textView2"
+                android:textAlignment="center"
+                android:layout_below="@+id/extraQueryParameters"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/correlationId"
+                android:layout_gravity="center_horizontal"
+                android:layout_below="@+id/extraQueryParameters"
+                android:layout_toRightOf="@+id/textView8"
+                android:layout_toEndOf="@+id/textView8" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Screen"
+                android:id="@+id/fullScreen"
+                android:layout_below="@+id/serviceUrl"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:checked="true" />
+
+            <Button
+                style="?android:attr/buttonStyleSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                android:id="@+id/settingsSave"
+                android:layout_below="@+id/useBroker"
+                android:layout_alignRight="@+id/askInstall"
+                android:layout_alignEnd="@+id/askInstall"
+                android:layout_marginTop="23dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </LinearLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Authority"
-            android:id="@+id/textView"
-            android:textAlignment="center" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/authority"
-            android:layout_gravity="center_horizontal"
-            android:layout_alignParentTop="true"
-            android:layout_toEndOf="@+id/textView4"
-            android:layout_toRightOf="@+id/textView4" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Client ID"
-            android:id="@+id/textView4"
-            android:layout_below="@+id/authority"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:textAlignment="center" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/clientId"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/authority"
-            android:layout_alignLeft="@+id/authority"
-            android:layout_alignStart="@+id/authority" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Resource"
-            android:id="@+id/textView5"
-            android:textAlignment="center"
-            android:layout_below="@+id/clientId"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/resource"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/clientId"
-            android:layout_alignLeft="@+id/clientId"
-            android:layout_alignStart="@+id/clientId" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Redirect URI"
-            android:id="@+id/textView6"
-            android:textAlignment="center"
-            android:layout_below="@+id/resource"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/redirectUri"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/resource"
-            android:layout_toRightOf="@+id/textView6"
-            android:layout_toEndOf="@+id/textView6" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Extra QP"
-            android:id="@+id/textView7"
-            android:textAlignment="center"
-            android:layout_below="@+id/redirectUri"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/extraQueryParameters"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/redirectUri"
-            android:layout_alignLeft="@+id/resource"
-            android:layout_alignStart="@+id/resource" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="TODO Service"
-            android:id="@+id/textView8"
-            android:textAlignment="center"
-            android:layout_below="@+id/extraQueryParameters"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/serviceUrl"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/extraQueryParameters"
-            android:layout_toRightOf="@+id/textView8"
-            android:layout_toEndOf="@+id/textView8" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Correlation ID"
-            android:id="@+id/textView2"
-            android:textAlignment="center"
-            android:layout_below="@+id/extraQueryParameters"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/correlationId"
-            android:layout_gravity="center_horizontal"
-            android:layout_below="@+id/extraQueryParameters"
-            android:layout_toRightOf="@+id/textView8"
-            android:layout_toEndOf="@+id/textView8" />
-
-        <Switch
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Full Screen"
-            android:id="@+id/fullScreen"
-            android:layout_below="@+id/serviceUrl"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:checked="true" />
-
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:id="@+id/settingsSave"
-            android:layout_below="@+id/useBroker"
-            android:layout_alignRight="@+id/askInstall"
-            android:layout_alignEnd="@+id/askInstall"
-            android:layout_marginTop="23dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>
 
 </RelativeLayout>
