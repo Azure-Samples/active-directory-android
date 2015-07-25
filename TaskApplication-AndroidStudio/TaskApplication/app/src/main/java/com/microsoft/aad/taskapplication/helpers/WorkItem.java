@@ -28,8 +28,8 @@ public class WorkItem {
 	/**
 	 * Item title
 	 */
-	@com.google.gson.annotations.SerializedName("Title")
-	private String mTitle;
+	@com.google.gson.annotations.SerializedName("Task")
+	private String mTask;
 
 	/**
 	 * Item Id
@@ -72,7 +72,7 @@ public class WorkItem {
 	 * Returns the item text
 	 */
 	public String getTitle() {
-		return mTitle;
+		return mTask;
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class WorkItem {
 	 *            text to set
 	 */
 	public final void setTitle(String text) {
-		mTitle = text;
+		mTask = text;
 	}
 
 	/**

@@ -38,7 +38,7 @@ public class TodoListHttpService {
                 JSONObject obj = null;
                 for (int i = 0; i < jsonArray.length(); i++) {
                     obj = jsonArray.getJSONObject(i);
-                    items.add(obj.getString("Title"));
+                    items.add(obj.getString("task"));
                 }
                 return items;
             } catch (Exception e) {
@@ -66,7 +66,7 @@ public class TodoListHttpService {
                 conn.setRequestMethod("GET");
                 conn.setRequestProperty("Content-Type", "application/json");
                 conn.setRequestProperty("Authorization", "Bearer " + params[1]);
-                String urlParameters = "{        \"Title\": \"" + params[0] + "\"    }";
+                String urlParameters = "{        \"task\": \"" + params[0] + "\"    }";
 
                 // Send post request
                 conn.setDoOutput(true);

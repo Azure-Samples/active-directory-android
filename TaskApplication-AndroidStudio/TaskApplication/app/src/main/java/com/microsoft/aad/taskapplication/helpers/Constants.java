@@ -37,17 +37,17 @@ public class Constants {
 
     // -------------------------------AAD
     // PARAMETERS----------------------------------
-    public static String AUTHORITY_URL = "https://login.windows.net/common";
-    public static String CLIENT_ID = "e3786e2a-0dcb-449a-8eba-b4042c9bec01";
-    public static String RESOURCE_ID = "https://aadadfs.onmicrosoft.com/TodoListService";
-    public static String REDIRECT_URL = "https://aadadfstodolistservice.azurewebsites.net";
+    public static String AUTHORITY_URL = "https://login.microsoftonline.com/common";
+    public static String CLIENT_ID = "e6d65cc4-f9e8-444a-9ba6-c3c82ce8086b";
+    public static String RESOURCE_ID = "http://kidventus.com/TodoListService";
+    public static String REDIRECT_URL = "mstodo://com.microsoft.windowsazure.activedirectory.samples.microsofttasks";
     public static String CORRELATION_ID = "";
     public static String USER_HINT = "";
     public static String EXTRA_QP = "";
     public static boolean FULL_SCREEN = true;
     public static AuthenticationResult CURRENT_RESULT = null;
     // Endpoint we are targeting for the deployed WebAPI service
-    public static String SERVICE_URL = "https://aadadfstodolistservice.azurewebsites.net/api/todolist";
+    public static String SERVICE_URL = "http://10.0.1.44:8080/tasks";
 
     // ------------------------------------------------------------------------------------------
 
