@@ -1,3 +1,9 @@
+---
+services:
+platforms:
+author: azure
+---
+
 #Microsoft Azure Active Directory Native Client for Android (Android API Level 18+)
 
 This sample shows how to build an Android application that calls a web API that requires a Work Account for authentication. This sample uses the Active Directory authentication library for Android to do the interactive OAuth 2.0 authorization code flow with public client.
