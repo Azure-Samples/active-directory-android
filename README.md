@@ -1,7 +1,7 @@
 ---
-services:
-platforms:
-author: azure
+services: active-directory
+platforms: android
+author: dstrockis
 ---
 
 # Integrating an android app with Azure AD (Android API Level 18+)
@@ -27,8 +27,8 @@ This sample is written specifically to work against our existing sample for buil
 
 For information on how to set this up, visit our existing samples here:
 
-* [Microsoft Azure Active Directory Sample REST API Service for Node.js](https://github.com/AzureADSamples/WebAPI-Nodejs)
-* [Microsoft Azure Active Directory Sample Web API Single Sign-On for .Net](https://github.com/AzureADSamples/NativeClient-DotNet)
+* [Microsoft Azure Active Directory Sample REST API Service for Node.js](https://github.com/Azure-Samples/WebAPI-Nodejs)
+* [Microsoft Azure Active Directory Sample Web API Single Sign-On for .Net](https://github.com/Azure-Samples/active-directory-dotnet-native-client)
 
 We recommend you deploy these on Microsoft Azure instead of running them locally (trust us, you'll want to show it off!) but you are free to do either.
 
