@@ -1,7 +1,7 @@
 ---
 services: active-directory
 platforms: android
-author: dstrockis
+author: brandwe
 ---
 
 # Integrating an android app with Azure AD (Android API Level 18+)
@@ -176,6 +176,7 @@ We will be writing more about this in the future. Please stay tuned!
 ## Advanced Topics
 
 After you've gotten through this walk-through and poked around the code, you'll probably have questions about how the code works. We've got you covered! Navigate to the [Active Directory Authentication Library for Android Wiki](https://github.com/AzureAD/azure-activedirectory-library-for-android/wiki) in the ADAL for Android GitHub repo for more detailed technical discussions.
+
 
 
 
