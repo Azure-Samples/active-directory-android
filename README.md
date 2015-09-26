@@ -87,7 +87,7 @@ Registering your web application is the first step. Next, you'll need to tell Az
 
 #### Download the ADAL for Android
 
-* `git clone git@github.com:AzureAD/azure-activedirectory-library-for-android.git`
+* `git clone https://github.com/AzureAD/azure-activedirectory-library-for-android.git`
 
 #### Import the library in to your Workspace
 
@@ -113,7 +113,7 @@ Sometimes the imported library is not marked as an Android library for your appl
 
 #### Download the Android Native Client sample code
 
-* `$ git clone git@github.com:AzureADSamples/NativeClient-Android.git`
+* `$ git clone https://github.com/Azure-Samples/active-directory-android.git`
 
 
 #### Import the library in to your Workspace
