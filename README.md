@@ -18,7 +18,7 @@ Getting started with the sample is easy. It is configured to run out of the box 
 
 ### Step 1: Register a Microsoft Azure AD Tenant
 
-To use this sample you will need a Microsoft Azure Active Directory Tenant. If you're not sure what a tenant is or how you would get one, read [What is a Microsoft Azure AD tenant](http://technet.microsoft.com/library/jj573650.aspx)? or [Sign up for Azure as an organization](http://www.windowsazure.com/en-us/manage/services/identity/organizational-account/). These docs should get you started on your way to using Microsoft Azure AD.
+To use this sample you will need a Microsoft Azure Active Directory Tenant. If you're not sure what a tenant is or how you would get one, read [What is a Microsoft Azure AD tenant](http://technet.microsoft.com/library/jj573650.aspx)? or [How to get an Azure AD tenant](https://azure.microsoft.com/en-us/documentation/articles/active-directory-howto-tenant/). These docs should get you started on your way to using Microsoft Azure AD.
 
 
 ### Step 2: Download and run either the .Net or Node.js REST API TODO Sample Server
