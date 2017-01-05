@@ -18,7 +18,7 @@ Getting started with the sample is easy. It is configured to run out of the box 
 
 ### Step 1: Register a Microsoft Azure AD Tenant
 
-To use this sample you will need a Microsoft Azure Active Directory Tenant. If you're not sure what a tenant is or how you would get one, read [What is a Microsoft Azure AD tenant](http://technet.microsoft.com/library/jj573650.aspx)? or [Sign up for Azure as an organization](http://www.windowsazure.com/en-us/manage/services/identity/organizational-account/). These docs should get you started on your way to using Microsoft Azure AD.
+To use this sample you will need a Microsoft Azure Active Directory Tenant. If you're not sure what a tenant is or how you would get one, read [What is a Microsoft Azure AD tenant](http://technet.microsoft.com/library/jj573650.aspx)? or [How to get an Azure AD tenant](https://azure.microsoft.com/en-us/documentation/articles/active-directory-howto-tenant/). These docs should get you started on your way to using Microsoft Azure AD.
 
 
 ### Step 2: Download and run either the .Net or Node.js REST API TODO Sample Server
@@ -43,17 +43,13 @@ We recommend you deploy these on Microsoft Azure instead of running them locally
 
 Steps to register a Web API with Microsoft Azure AD
 
-1. Sign in to the [Azure management portal](https://manage.windowsazure.com).
-2. Click on Active Directory in the left hand nav.
-3. Click the directory tenant where you wish to register the sample application.
-4. Click the Applications tab.
-5. In the drawer, click Add.
-6. Click "Add an application my organization is developing".
-7. Enter a friendly name for the application, for example "TodoListService", select "Web Application and/or Web API", and click next.
-8. For the sign-on URL, enter the base URL for the sample, which is by default `https://localhost:8080`.
-9. For the App ID URI, enter `https://<your_tenant_name>/TodoListService`, replacing `<your_tenant_name>` with the name of your Azure AD tenant.  Click OK to complete the registration.
-10. While still in the Azure portal, click the Configure tab of your application.
-11. **Find the Client ID value and copy it aside**, you will need this later when configuring your application.
+1. Sign in to the [Azure portal](https://portal.azure.com).
+2. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant where you wish to register your application.
+3. Click on **More Services** in the left hand nav, and choose **Azure Active Directory**.
+4. Click on **App registrations** and choose **Add**.
+5. Enter a friendly name for the application, for example 'TodoListService' and select 'Web Application and/or Web API' as the Application Type. For the sign-on URL, enter the base URL for the sample, which is by default `https://localhost:8080`. For the App ID URI, enter https://<your_tenant_name>/TodoListService, replacing <your_tenant_name> with the name of your Azure AD tenant. Click on **Create** to create the application.
+6. While still in the Azure portal, choose your application, click on **Settings** and choose **Properties**.
+7. Find the Application ID value and copy it to the clipboard.
 
 ### Step 4: Register the sample Android Native Client application
 
@@ -69,20 +65,15 @@ Registering your web application is the first step. Next, you'll need to tell Az
 
 *As you might have guessed, you could build an app that accesses an external API that is registered in Azure Active Directory from another tenant. If you do that your customers will be prompted to consent to the use of the API in the application. The nice part is Active Directory Authentication Library for Android takes care of this consent for you! As we get in to more advanced features you'll see this is an important part of the work needed to access the suite of Microsoft APIs from Azure and Office as well as any other service provider. For now, because you registered both your Web API and application under the same tenant you won't see any prompts for consent. This is usually the case if you are developing an application just for your own company to use.*
 
-1. Sign in to the [Azure management portal](https://manage.windowsazure.com).
-2. Click on Active Directory in the left hand nav.
-3. Click the directory tenant where you wish to register the sample application.
-4. Click the Applications tab.
-5. In the drawer, click Add.
-6. Click "Add an application my organization is developing".
-7. Enter a friendly name for the application, for example "TodoListClient-DotNet", select "Native Client Application", and click next.
-8. For the Redirect URI, enter `http://TodoListClient`.  Click finish.
-9. Click the Configure tab of the application.
-10. Find the Client ID value and copy it aside, you will need this later when configuring your application.
-11. In "Permissions to Other Applications", click "Add Application."  Select "Other" in the "Show" dropdown, and click the upper check mark.  Locate & click on the TodoListService, and click the bottom check mark to add the application.  Select "Access TodoListService" from the "Delegated Permissions" dropdown, and save the configuration.
+1. Sign in to the [Azure portal](https://portal.azure.com).
+2. On the top bar, click on your account and under the **Directory** list, choose the Active Directory tenant where you wish to register your application.
+3. Click on **More Services** in the left hand nav, and choose **Azure Active Directory**.
+4. Click on **App registrations** and choose **Add**.
+5. Enter a friendly name for the application, for example 'TodoListClient-DotNet' and select 'Native' as the Application Type. For the Redirect URI, enter `https://TodoListClient`. Click on **Create** to create the application.
+6. While still in the Azure portal, choose your application, click on **Settings** and choose **Properties**.
+7. Find the Application ID value and copy it to the clipboard.
+8. Configure Permissions for your application - in the Settings menu, choose the 'Required permissions' section, click on **Add**, then **Select an API**, and type "TodoListService" in the text box. Then, click on  **Select Permissions** and select 'Access TodoListService'.
 
-
-#
 ## Step 5: Download ADAL for Android and add it to your Eclipse Workspace
 
 #### Download the ADAL for Android
@@ -176,7 +167,6 @@ We will be writing more about this in the future. Please stay tuned!
 ## Advanced Topics
 
 After you've gotten through this walk-through and poked around the code, you'll probably have questions about how the code works. We've got you covered! Navigate to the [Active Directory Authentication Library for Android Wiki](https://github.com/AzureAD/azure-activedirectory-library-for-android/wiki) in the ADAL for Android GitHub repo for more detailed technical discussions.
-
 
 
 
