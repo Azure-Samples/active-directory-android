@@ -1,7 +1,7 @@
 ---
 services: active-directory
 platforms: android
-author: xerners
+author: brandwe
 ---
 
 # Integrating an android app with Azure AD (Android API Level 18+)
