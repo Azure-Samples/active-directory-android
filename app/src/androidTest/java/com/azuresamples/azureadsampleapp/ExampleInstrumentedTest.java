@@ -1,4 +1,4 @@
-package com.azuresamples.azureadsampleapp.azureadsampleapp;
+package com.azuresamples.azureadsampleapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
-
 /**
  * Instrumentation test, which will execute on an Android device.
  *
@@ -21,6 +20,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.azuresamples.azureadsampleapp.azureadsampleapp", appContext.getPackageName());
+        assertEquals("com.azuresamples.azureadsampleapp", appContext.getPackageName());
     }
 }

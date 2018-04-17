@@ -1,4 +1,4 @@
-package com.azuresamples.azureadsampleapp.azureadsampleapp;
+package com.azuresamples.azureadsampleapp;
 
 import org.junit.Test;
 
