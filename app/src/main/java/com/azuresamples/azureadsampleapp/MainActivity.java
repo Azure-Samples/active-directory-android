@@ -1,7 +1,11 @@
 package com.azuresamples.azureadsampleapp;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,7 +14,6 @@ import android.widget.Button;
 import android.view.View;
 import android.widget.TextView;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -24,7 +27,9 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +56,32 @@ public class MainActivity extends AppCompatActivity {
     private AuthenticationContext mAuthContext;
     private AuthenticationResult mAuthResult;
 
+    /* Handler to do an interactive sign in and acquire token */
+    private Handler mAcquireTokenHandler;
+    /* Boolean variable to ensure invocation of interactive sign-in only once in case of multiple  acquireTokenSilent call failures */
+    private static AtomicBoolean sIntSignInInvoked = new AtomicBoolean();
+    /* Constant to send message to the mAcquireTokenHandler */
+    private static final int MSG_INTERACTIVE_SIGN_IN = 1;
+
+    /* Telemetry variables */
+    // Get a reference to the Telemetry singleton
+    private static final Telemetry sTelemetry = Telemetry.getInstance();
+    // Flag to turn event aggregation on/off
+    private static final boolean sTelemetryAggregationIsRequired = true;
+
+    /* Telemetry dispatcher registration */
+    static {
+        sTelemetry.registerDispatcher(new IDispatcher() {
+            @Override
+            public void dispatchEvent(Map<String, String> events) {
+                // Events from ADAL will be sent to this callback
+                for(Map.Entry<String, String> entry: events.entrySet()) {
+                    Log.d(TAG, entry.getKey() + ": " + entry.getValue());
+                }
+            }
+        }, sTelemetryAggregationIsRequired);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,17 +104,39 @@ public class MainActivity extends AppCompatActivity {
 
         mAuthContext = new AuthenticationContext(MainActivity.this, AUTHORITY, false);
 
+        /* Instantiate handler which can invoke interactive sign-in to get the Resource
+         * sIntSignInInvoked ensures interactive sign-in is invoked one at a time */
+
+        mAcquireTokenHandler = new Handler(Looper.getMainLooper()){
+            @Override
+            public void handleMessage(Message msg) {
+                if(msg.what == MSG_INTERACTIVE_SIGN_IN && sIntSignInInvoked.compareAndSet(false, true)){
+                    mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI,  PromptBehavior.Auto, getAuthInteractiveCallback());
+                }
+            }
+        };
+
+        /* ADAL Logging callback setup */
+
+        Logger.getInstance().setExternalLogger(new Logger.ILogger() {
+            @Override
+            public void Log(String tag, String message, String additionalMessage, Logger.LogLevel level, ADALError errorCode) {
+                // You can filter the logs  depending on level or errorcode.
+                Log.d(TAG, message + " " + additionalMessage);
+            }
+        });
+
         /*Attempt an acquireTokenSilent call to see if we're signed in*/
 
-       Iterator<TokenCacheItem> iterator =  mAuthContext.getCache().getAll();
-       while (iterator.hasNext()){
-           TokenCacheItem tokenCacheItem = iterator.next();
-           String userId = tokenCacheItem.getUserInfo().getUserId();
-           if(!TextUtils.isEmpty(userId)){
-               mAuthContext.acquireTokenSilentAsync(RESOURCE_ID, CLIENT_ID, userId, getAuthSilentCallback());
-               break;
-           }
-       }
+        Iterator<TokenCacheItem> iterator =  mAuthContext.getCache().getAll();
+        while (iterator.hasNext()){
+            TokenCacheItem tokenCacheItem = iterator.next();
+            String userId = tokenCacheItem.getUserInfo().getUserId();
+            if(!TextUtils.isEmpty(userId)){
+                mAuthContext.acquireTokenSilentAsync(RESOURCE_ID, CLIENT_ID, userId, getAuthSilentCallback());
+                break;
+            }
+        }
     }
 
     //
@@ -106,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
      * Use ADAL to get an Access token for the Microsoft Graph API
      */
     private void onCallGraphClicked() {
-        mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI,  PromptBehavior.Auto, getAuthInteractiveCallback());
+        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
     }
 
     private void callGraphAPI() {
@@ -177,6 +230,7 @@ public class MainActivity extends AppCompatActivity {
         graphText.setText(response.toString());
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateSuccessUI() {
         // Called on success from /me endpoint
         // Removed call Graph API button and paint Sign out
@@ -189,6 +243,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void updateSignedOutUI() {
         callGraphButton.setVisibility(View.VISIBLE);
         signOutButton.setVisibility(View.INVISIBLE);
@@ -217,9 +272,15 @@ public class MainActivity extends AppCompatActivity {
         return new AuthenticationCallback<AuthenticationResult>() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
+                if(authenticationResult==null || TextUtils.isEmpty(authenticationResult.getAccessToken())
+                        || authenticationResult.getStatus()!= AuthenticationResult.AuthenticationStatus.Succeeded){
+                    Log.d(TAG, "Silent acquire token Authentication Result is invalid, retrying with interactive");
+                    /* retry with interactive */
+                    mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+                    return;
+                }
                 /* Successfully got a token, call graph now */
                 Log.d(TAG, "Successfully authenticated");
-
                 /* Store the mAuthResult */
                 mAuthResult = authenticationResult;
                 /* call graph */
@@ -237,21 +298,36 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onError(Exception exception) {
                 /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
+                Log.e(TAG, "Authentication failed: " + exception.toString());
                 if (exception instanceof AuthenticationException) {
-                    /* TODO: Make sure user cancel error is covered */
-                   ADALError  error = ((AuthenticationException)exception).getCode();
-                   if(error == ADALError.ERROR_SILENT_REQUEST || error == ADALError.AUTH_REFRESH_FAILED_PROMPT_NOT_ALLOWED || error == ADALError.INVALID_TOKEN_CACHE_ITEM ){
-                       /* Tokens expired or no session, retry with interactive */
-                       mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI,  PromptBehavior.Auto, getAuthInteractiveCallback());
-                   }
-                } else {
-                    /* Tokens expired or no session, retry with interactive */
-                    mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI,  PromptBehavior.Auto, getAuthInteractiveCallback());
+                    AuthenticationException authException = ((AuthenticationException) exception);
+                    ADALError error = authException.getCode();
+                    logHttpErrors(authException);
+                    /*  Tokens expired or no session, retry with interactive */
+                    if (error == ADALError.ERROR_SILENT_REQUEST || error == ADALError.AUTH_REFRESH_FAILED_PROMPT_NOT_ALLOWED || error == ADALError.INVALID_TOKEN_CACHE_ITEM) {
+                        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+                    }
+                    return;
                 }
+                /* Attempt an interactive on any other exception */
+                mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
             }
         };
+    }
+
+    private void logHttpErrors(AuthenticationException authException){
+        Log.d(TAG , "HTTP Response code: " + authException.getServiceStatusCode());
+        HashMap<String, List<String>> headers = authException.getHttpResponseHeaders();
+        if(headers!=null){
+            StringBuilder sb = new StringBuilder();
+            for(Map.Entry<String, List<String>> entry : headers.entrySet()){
+                sb.append(entry.getKey());
+                sb.append(":");
+                sb.append(entry.getValue().toString());
+                sb.append("; ");
+            }
+            Log.e(TAG, "HTTP Response headers: " + sb.toString());
+        }
     }
 
     /* Callback used for interactive request.  If succeeds we use the access
@@ -261,9 +337,14 @@ public class MainActivity extends AppCompatActivity {
         return new AuthenticationCallback<AuthenticationResult>() {
             @Override
             public void onSuccess(AuthenticationResult authenticationResult) {
+                if(authenticationResult==null || TextUtils.isEmpty(authenticationResult.getAccessToken())
+                        || authenticationResult.getStatus()!= AuthenticationResult.AuthenticationStatus.Succeeded){
+                    Log.e(TAG, "Authentication Result is invalid");
+                    return;
+                }
                 /* Successfully got a token, call graph now */
-                Log.e(TAG, "Successfully authenticated");
-                Log.e(TAG, "ID Token: " + authenticationResult.getIdToken());
+                Log.d(TAG, "Successfully authenticated");
+                Log.d(TAG, "ID Token: " + authenticationResult.getIdToken());
 
                 /* Store the auth result */
                 mAuthResult = authenticationResult;
@@ -278,21 +359,22 @@ public class MainActivity extends AppCompatActivity {
                         updateSuccessUI();
                     }
                 });
-
+                /* set the sIntSignInInvoked boolean back to false  */
+                sIntSignInInvoked.set(false);
             }
 
             @Override
             public void onError(Exception exception) {
                 /* Failed to acquireToken */
-                Log.d(TAG, "Authentication failed: " + exception.toString());
-
+                Log.e(TAG, "Authentication failed: " + exception.toString());
                 if (exception instanceof AuthenticationException) {
-                    /* TODO: Implement error handling described in doc https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devhowto-adal-error-handling */
-                    /* TODO: Make sure user cancel error is covered */
-
-                } else {
-                    /* Tokens expired or no session, retry with interactive */
+                    ADALError  error = ((AuthenticationException)exception).getCode();
+                    if(error==ADALError.AUTH_FAILED_CANCELLED){
+                        Log.e(TAG, "The user cancelled the authorization request");
+                    }
                 }
+                /* set the sIntSignInInvoked boolean back to false  */
+                sIntSignInInvoked.set(false);
             }
         };
     }
