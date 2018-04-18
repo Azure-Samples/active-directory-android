@@ -60,17 +60,17 @@ You will need to have a native client application registered with Microsoft usin
 
 1. Getting to app registration
     - Navigate to the [Azure portal](https://aad.portal.azure.com).  
-    - Click on `Azure Active Directory` > `App Registrations`. 
+    - Click on ***Azure Active Directory*** > ***App Registrations***. 
 
 2. Create the app
-    - Click `New application registration`.  
-    - Enter an app name in the `Name` field. 
-    - In `Application type`, select `Native`. 
-    - In `Redirect URI`, enter `http://localhost`.  
+    - Click ***New application registration***.  
+    - Enter an app name in the ***Name*** field. 
+    - In ***Application type***, select `Native`. 
+    - In ***Redirect URI***, enter `http://localhost`.  
 
 3. Configure Microsoft Graph
-    - Select `Settings` > `Required Permissions`.
-    - Click `Add`, inside `Select an API` select `Microsoft Graph`. 
+    - Select ***Settings*** > ***Required Permissions***.
+    - Click ***Add***, inside ***Select an API*** select ***Microsoft Graph***. 
     - Select the permission `Sign in and read user profile` > Hit `Select` to save. 
         - This permission maps to the `User.Read` scope. 
 
@@ -85,11 +85,11 @@ You will need to have a native client application registered with Microsoft usin
     git clone https://github.com/Azure-Samples/active-directory-android
     ```
 2. Open the sample in Android Studio.
-    - Select `Open an existing Android Studio project`.
+    - Select ***Open an existing Android Studio project***.
 
 ### Configure the code
 
-All the configuration for this code sample can be found in the `src/main/java/com/azuresamples/azuresampleapp/MainActivity.java`.  
+All the configuration for this code sample can be found in the ***src/main/java/com/azuresamples/azuresampleapp/MainActivity.java***.  
 
 1. Replace the constant `CLIENT_ID` with the `ApplicationID`.
 
@@ -97,9 +97,9 @@ All the configuration for this code sample can be found in the `src/main/java/co
 
 ### Run the sample
 
-1. Select `Build` > `Clean Project`. 
+1. Select ***Build*** > ***Clean Project***. 
 
-2. Select `Run` > `Run *app*`. 
+2. Select ***Run*** > ***Run `app`***. 
 
 3. The app should build and show some basic UX. When you click the `Call Graph API` button, it will prompt for a sign in, and then silently call the Microsoft Graph API with the new token.  
 
