@@ -7,7 +7,7 @@ client: Android Mobile App
 service: Microsoft Graph
 endpoint: AAD V1
 ---
-# ADAL Android Sample Microsoft Graph API Sample 
+# ADAL Android Microsoft Graph API Sample 
 
 | [Getting Started](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devquickstarts-android)| [Library](https://github.com/AzureAD/azure-activedirectory-library-for-android) | [API Reference](http://javadoc.io/doc/com.microsoft.aad/adal/) | [Support](README.md#community-help-and-support)
 | --- | --- | --- | --- |
@@ -99,7 +99,7 @@ All the configuration for this code sample can be found in the ***src/main/java/
 
 1. Select ***Build*** > ***Clean Project***. 
 
-2. Select ***Run*** > ***Run `app`***. 
+2. Select ***Run*** > ***Run app***. 
 
 3. The app should build and show some basic UX. When you click the `Call Graph API` button, it will prompt for a sign in, and then silently call the Microsoft Graph API with the new token.  
 
