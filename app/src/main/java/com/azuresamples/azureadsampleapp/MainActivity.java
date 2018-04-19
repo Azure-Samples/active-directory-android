@@ -3,9 +3,11 @@ package com.azuresamples.azureadsampleapp;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -40,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
     Button signOutButton;
 
     /* Azure AD Constants */
-    //TODO : Add description for Authority
+    /* Authority is in the form of https://login.microsoftonline.com/yourtenant.onmicrosoft.com */
     private static final String AUTHORITY = "https://login.microsoftonline.com/common";
     /* The clientID of your application is a unique identifier which can be obtained from the app registration portal */
     private static final String CLIENT_ID = "<ENTER YOUR CLIENT ID HERE>";
     /* Resource URI of the endpoint which will be accessed */
     private static final String RESOURCE_ID = "https://graph.microsoft.com/";
     /* The Redirect URI of the application (Optional) */
-    private static final String REDIRECT_URI = "<ENTER YOUR REDIRECT URI HERE";
+    private static final String REDIRECT_URI = "<ENTER YOUR REDIRECT URI HERE>";
 
     /* Microsoft Graph Constants */
     private final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private static AtomicBoolean sIntSignInInvoked = new AtomicBoolean();
     /* Constant to send message to the mAcquireTokenHandler */
     private static final int MSG_INTERACTIVE_SIGN_IN = 1;
+    /* Constant to store user id in shared preferences */
+    private static final String USER_ID = "user_id";
 
     /* Telemetry variables */
     // Get a reference to the Telemetry singleton
@@ -127,15 +131,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         /*Attempt an acquireTokenSilent call to see if we're signed in*/
-
-        Iterator<TokenCacheItem> iterator =  mAuthContext.getCache().getAll();
-        while (iterator.hasNext()){
-            TokenCacheItem tokenCacheItem = iterator.next();
-            String userId = tokenCacheItem.getUserInfo().getUserId();
-            if(!TextUtils.isEmpty(userId)){
-                mAuthContext.acquireTokenSilentAsync(RESOURCE_ID, CLIENT_ID, userId, getAuthSilentCallback());
-                break;
-            }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String userId = preferences.getString(USER_ID, "");
+        if(!TextUtils.isEmpty(userId)){
+            mAuthContext.acquireTokenSilentAsync(RESOURCE_ID, CLIENT_ID, userId, getAuthSilentCallback());
         }
     }
 
@@ -316,17 +315,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logHttpErrors(AuthenticationException authException){
+        int httpResponseCode = authException.getServiceStatusCode();
         Log.d(TAG , "HTTP Response code: " + authException.getServiceStatusCode());
-        HashMap<String, List<String>> headers = authException.getHttpResponseHeaders();
-        if(headers!=null){
-            StringBuilder sb = new StringBuilder();
-            for(Map.Entry<String, List<String>> entry : headers.entrySet()){
-                sb.append(entry.getKey());
-                sb.append(":");
-                sb.append(entry.getValue().toString());
-                sb.append("; ");
+        if(httpResponseCode< 200 || httpResponseCode >300) {
+            // logging http response headers in case of a http error.
+            HashMap<String, List<String>> headers = authException.getHttpResponseHeaders();
+            if (headers != null) {
+                StringBuilder sb = new StringBuilder();
+                for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                    sb.append(entry.getKey());
+                    sb.append(":");
+                    sb.append(entry.getValue().toString());
+                    sb.append("; ");
+                }
+                Log.e(TAG, "HTTP Response headers: " + sb.toString());
             }
-            Log.e(TAG, "HTTP Response headers: " + sb.toString());
         }
     }
 
@@ -348,6 +351,10 @@ public class MainActivity extends AppCompatActivity {
 
                 /* Store the auth result */
                 mAuthResult = authenticationResult;
+
+                /* Store User id to SharedPreferences to use it to acquire token silently later */
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                preferences.edit().putString(USER_ID, authenticationResult.getUserInfo().getUserId()).apply();
 
                 /* call graph */
                 callGraphAPI();
