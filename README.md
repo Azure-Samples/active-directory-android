@@ -12,7 +12,7 @@ endpoint: AAD V1
 | [Getting Started](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-devquickstarts-android)| [Library](https://github.com/AzureAD/azure-activedirectory-library-for-android) | [API Reference](http://javadoc.io/doc/com.microsoft.aad/adal/) | [Support](README.md#community-help-and-support)
 | --- | --- | --- | --- |
 
-![Build Badge]()
+![Build Badge](https://identitydivision.visualstudio.com/_apis/public/build/definitions/a7934fdd-dcde-4492-a406-7fad6ac00e17/506/badge)
 
 The ADAL Android library gives your app the ability to begin using the
 [Microsoft Azure Cloud](https://cloud.microsoft.com) by supporting [Microsoft Azure Active Directory accounts](https://azure.microsoft.com/en-us/services/active-directory/) using industry standard OAuth2 and OpenID Connect. This sample demonstrates all the normal lifecycles your application should experience, including:
