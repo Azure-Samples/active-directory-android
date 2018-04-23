@@ -4,16 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Button;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -23,12 +23,19 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.microsoft.aad.adal.*;
+import com.microsoft.aad.adal.ADALError;
+import com.microsoft.aad.adal.AuthenticationCallback;
+import com.microsoft.aad.adal.AuthenticationContext;
+import com.microsoft.aad.adal.AuthenticationException;
+import com.microsoft.aad.adal.AuthenticationResult;
+import com.microsoft.aad.adal.IDispatcher;
+import com.microsoft.aad.adal.Logger;
+import com.microsoft.aad.adal.PromptBehavior;
+import com.microsoft.aad.adal.Telemetry;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -106,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mAuthContext = new AuthenticationContext(MainActivity.this, AUTHORITY, false);
+        mAuthContext = new AuthenticationContext(getApplicationContext(), AUTHORITY, false);
 
         /* Instantiate handler which can invoke interactive sign-in to get the Resource
          * sIntSignInInvoked ensures interactive sign-in is invoked one at a time */
