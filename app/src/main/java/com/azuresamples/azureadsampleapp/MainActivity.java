@@ -69,20 +69,21 @@ public class MainActivity extends AppCompatActivity {
     private Handler mAcquireTokenHandler;
     /* Boolean variable to ensure invocation of interactive sign-in only once in case of multiple  acquireTokenSilent call failures */
     private static AtomicBoolean sIntSignInInvoked = new AtomicBoolean();
-    /* Constant to send message to the mAcquireTokenHandler */
-    private static final int MSG_INTERACTIVE_SIGN_IN = 1;
+    /* Constant to send message to the mAcquireTokenHandler to do acquire token with Prompt.Auto*/
+    private static final int MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO = 1;
+    /* Constant to send message to the mAcquireTokenHandler to do acquire token with Prompt.Always */
+    private static final int MSG_INTERACTIVE_SIGN_IN_PROMT_ALWAYS = 2;
+
     /* Constant to store user id in shared preferences */
     private static final String USER_ID = "user_id";
 
     /* Telemetry variables */
-    // Get a reference to the Telemetry singleton
-    private static final Telemetry sTelemetry = Telemetry.getInstance();
     // Flag to turn event aggregation on/off
     private static final boolean sTelemetryAggregationIsRequired = true;
 
     /* Telemetry dispatcher registration */
     static {
-        sTelemetry.registerDispatcher(new IDispatcher() {
+        Telemetry.getInstance().registerDispatcher(new IDispatcher() {
             @Override
             public void dispatchEvent(Map<String, String> events) {
                 // Events from ADAL will be sent to this callback
@@ -121,8 +122,12 @@ public class MainActivity extends AppCompatActivity {
         mAcquireTokenHandler = new Handler(Looper.getMainLooper()){
             @Override
             public void handleMessage(Message msg) {
-                if(msg.what == MSG_INTERACTIVE_SIGN_IN && sIntSignInInvoked.compareAndSet(false, true)){
-                    mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI,  PromptBehavior.Auto, getAuthInteractiveCallback());
+                if( sIntSignInInvoked.compareAndSet(false, true)) {
+                    if (msg.what == MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO){
+                        mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI, PromptBehavior.Auto, getAuthInteractiveCallback());
+                    }else if(msg.what == MSG_INTERACTIVE_SIGN_IN_PROMT_ALWAYS){
+                        mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI, PromptBehavior.Always, getAuthInteractiveCallback());
+                    }
                 }
             }
         };
@@ -165,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
      * Use ADAL to get an Access token for the Microsoft Graph API
      */
     private void onCallGraphClicked() {
-        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO);
     }
 
     private void callGraphAPI() {
@@ -282,7 +287,7 @@ public class MainActivity extends AppCompatActivity {
                         || authenticationResult.getStatus()!= AuthenticationResult.AuthenticationStatus.Succeeded){
                     Log.d(TAG, "Silent acquire token Authentication Result is invalid, retrying with interactive");
                     /* retry with interactive */
-                    mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+                    mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO);
                     return;
                 }
                 /* Successfully got a token, call graph now */
@@ -310,13 +315,18 @@ public class MainActivity extends AppCompatActivity {
                     ADALError error = authException.getCode();
                     logHttpErrors(authException);
                     /*  Tokens expired or no session, retry with interactive */
-                    if (error == ADALError.ERROR_SILENT_REQUEST || error == ADALError.AUTH_REFRESH_FAILED_PROMPT_NOT_ALLOWED || error == ADALError.INVALID_TOKEN_CACHE_ITEM) {
-                        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+                    if (error == ADALError.AUTH_REFRESH_FAILED_PROMPT_NOT_ALLOWED ) {
+                        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO);
+                    }else if(error == ADALError.NO_NETWORK_CONNECTION_POWER_OPTIMIZATION){
+                        /* Device is in Doze mode or App is in stand by mode.
+                           Wake up the app or show an appropriate prompt for the user to take action
+                           More information on this : https://github.com/AzureAD/azure-activedirectory-library-for-android/wiki/Handle-Doze-and-App-Standby */
+                        Log.e(TAG, "Device is in doze mode or the app is in standby mode");
                     }
                     return;
                 }
                 /* Attempt an interactive on any other exception */
-                mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN);
+                mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMT_AUTO);
             }
         };
     }
@@ -385,6 +395,15 @@ public class MainActivity extends AppCompatActivity {
                     ADALError  error = ((AuthenticationException)exception).getCode();
                     if(error==ADALError.AUTH_FAILED_CANCELLED){
                         Log.e(TAG, "The user cancelled the authorization request");
+                    }else if(error== ADALError.AUTH_FAILED_NO_TOKEN){
+                        // In this case ADAL has found a token in cache but failed to retrieve it.
+                        // Retry interactive with Prompt.Always to ensure we do an interactive sign in
+                        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMT_ALWAYS);
+                    }else if(error == ADALError.NO_NETWORK_CONNECTION_POWER_OPTIMIZATION){
+                        /* Device is in Doze mode or App is in stand by mode.
+                           Wake up the app or show an appropriate prompt for the user to take action
+                           More information on this : https://github.com/AzureAD/azure-activedirectory-library-for-android/wiki/Handle-Doze-and-App-Standby */
+                        Log.e(TAG, "Device is in doze mode or the app is in standby mode");
                     }
                 }
                 /* set the sIntSignInInvoked boolean back to false  */
