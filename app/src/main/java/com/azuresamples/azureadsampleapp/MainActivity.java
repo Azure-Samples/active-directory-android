@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
 
     /* UI & Debugging Variables */
     private static final String TAG = MainActivity.class.getSimpleName();
+
     Button callGraphButton;
     Button signOutButton;
 
@@ -52,11 +55,11 @@ public class MainActivity extends AppCompatActivity {
     /* Authority is in the form of https://login.microsoftonline.com/yourtenant.onmicrosoft.com */
     private static final String AUTHORITY = "https://login.microsoftonline.com/common";
     /* The clientID of your application is a unique identifier which can be obtained from the app registration portal */
-    private static final String CLIENT_ID = "<ENTER YOUR CLIENT ID HERE>";
+    private static final String CLIENT_ID = "1646e717-a80f-4b5e-95ce-610e2d42b1d2";
     /* Resource URI of the endpoint which will be accessed */
     private static final String RESOURCE_ID = "https://graph.microsoft.com/";
     /* The Redirect URI of the application (Optional) */
-    private static final String REDIRECT_URI = "<ENTER YOUR REDIRECT URI HERE>";
+    private static final String REDIRECT_URI = "androidSample1://auth";
 
     /* Microsoft Graph Constants */
     private final static String MSGRAPH_URL = "https://graph.microsoft.com/v1.0/me";
@@ -67,12 +70,22 @@ public class MainActivity extends AppCompatActivity {
 
     /* Handler to do an interactive sign in and acquire token */
     private Handler mAcquireTokenHandler;
+    /* Handler to create toasts */
+    private Handler mHandler = null;
+    /* claims request parameter returned from resource server */
+    private String mClaims;
+
+
     /* Boolean variable to ensure invocation of interactive sign-in only once in case of multiple  acquireTokenSilent call failures */
     private static AtomicBoolean sIntSignInInvoked = new AtomicBoolean();
     /* Constant to send message to the mAcquireTokenHandler to do acquire token with Prompt.Auto*/
     private static final int MSG_INTERACTIVE_SIGN_IN_PROMPT_AUTO = 1;
     /* Constant to send message to the mAcquireTokenHandler to do acquire token with Prompt.Always */
     private static final int MSG_INTERACTIVE_SIGN_IN_PROMPT_ALWAYS = 2;
+    /* Constant to send message to the mAcquireTokenHandler to do acquire token with Prompt.Always & Claims*/
+    private static final int MSG_INTERACTIVE_SIGN_IN_PROMPT_AUTO_CLAIMS = 3;
+    /* Constant to send message to the mAcquireTokenHandler to do acquire token silent with claims*/
+    private static final int MSG_SILENT_SIGN_IN_CLAIMS = 4;
 
     /* Constant to store user id in shared preferences */
     private static final String USER_ID = "user_id";
@@ -127,6 +140,12 @@ public class MainActivity extends AppCompatActivity {
                         mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI, PromptBehavior.Auto, getAuthInteractiveCallback());
                     }else if(msg.what == MSG_INTERACTIVE_SIGN_IN_PROMPT_ALWAYS){
                         mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI, PromptBehavior.Always, getAuthInteractiveCallback());
+                    }else if(msg.what == MSG_INTERACTIVE_SIGN_IN_PROMPT_AUTO_CLAIMS){
+                        mAuthContext.acquireToken(getActivity(), RESOURCE_ID, CLIENT_ID, REDIRECT_URI, null, PromptBehavior.Auto, null, mClaims, getAuthInteractiveCallback());
+                    }else if(msg.what == MSG_SILENT_SIGN_IN_CLAIMS){
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                        String userId = preferences.getString(USER_ID, "");
+                        mAuthContext.acquireTokenSilentAsync(RESOURCE_ID, CLIENT_ID, userId, mClaims, getAuthSilentCallback());
                     }
                 }
             }
@@ -170,7 +189,11 @@ public class MainActivity extends AppCompatActivity {
      * Use ADAL to get an Access token for the Microsoft Graph API
      */
     private void onCallGraphClicked() {
-        mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMPT_AUTO);
+        if(isValidConfiguration()) {
+            mAcquireTokenHandler.sendEmptyMessage(MSG_INTERACTIVE_SIGN_IN_PROMPT_AUTO);
+        }else{
+            showMessage("Please update the constants in MainActivity with your client id and redirect URI.");
+        }
     }
 
     private void callGraphAPI() {
@@ -187,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             Log.d(TAG, "Failed to put parameters: " + e.toString());
         }
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, MSGRAPH_URL,
                 parameters,new Response.Listener<JSONObject>() {
             @Override
@@ -199,7 +223,19 @@ public class MainActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d(TAG, "Error: " + error.toString());
+                if(error instanceof AuthFailureError){
+                    AuthFailureError authError = (AuthFailureError)error;
+                    String authenticateHeader = authError.networkResponse.headers.get("WWW-Authenticate");
+                    String claims = getClaims(authenticateHeader);
+                    if(claims != null && !claims.isEmpty()){
+                        mClaims = claims;
+                        mAcquireTokenHandler.sendEmptyMessage(MSG_SILENT_SIGN_IN_CLAIMS);
+                    }else{
+                        Log.d(TAG, "Error: " + error.toString());
+                    }
+                }else {
+                    Log.d(TAG, "Error: " + error.toString());
+                }
             }
         }) {
             @Override
@@ -233,6 +269,52 @@ public class MainActivity extends AppCompatActivity {
     // updateSuccessUI() - Updates UI when token acquisition succeeds
     // updateSignedOutUI() - Updates UI when app sign out succeeds
     //
+
+    private String getClaims(String authenticateHeaderValue){
+
+        String instructionDelimiter = "\\s*,\\s*";
+        String claimsValue = null;
+
+        if(authenticateHeaderValue != null) {
+            String[] instructions = authenticateHeaderValue.split(instructionDelimiter);
+
+            for (String instruction : instructions) {
+                if (instruction.toLowerCase().startsWith("claims")) {
+                    claimsValue = instruction.substring(instruction.indexOf("=") + 2, instruction.length() - 1);
+                }
+            }
+        }
+
+        return claimsValue;
+    }
+
+    private boolean isValidConfiguration(){
+        String defaultRedirectUri = "<ENTER YOUR REDIRECT URI HERE>";
+        String defaultClientId = "<ENTER YOUR CLIENT ID HERE>";
+
+        if(REDIRECT_URI == defaultRedirectUri || CLIENT_ID == defaultClientId){
+            return false;
+        }
+
+        return true;
+    }
+
+    private void showMessage(final String msg) {
+        getHandler().post(new Runnable() {
+
+            @Override
+            public void run() {
+                Toast.makeText(MainActivity.this, msg, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private Handler getHandler() {
+        if (mHandler == null) {
+            return new Handler(MainActivity.this.getMainLooper());
+        }
+        return mHandler;
+    }
 
     private void updateGraphUI(JSONObject response) {
         // Called on success from /me endpoint
