@@ -67,8 +67,8 @@ You will need to have a native client application registered with Microsoft usin
     - Select ***New registration***.  
     - Enter an application name in the ***Name*** field. 
     - Set ***Supported account types*** to ***Accounts in any organizational directory***. 
-    - Leave ***Redirect URI*** `http://localhost`.  
-    - Choose ***Register***.
+    - In the ***Redirect URI (optional)*** section, select the `Public client (mobile & desktop)` option and enter `http://localhost` in the Redirect URI field.  
+    - Click ***Register***.
 
 3. Configure Microsoft Graph
     - Under ***Manage***, select ***API permissions***.
