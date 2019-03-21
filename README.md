@@ -67,14 +67,14 @@ You will need to have a native client application registered with Microsoft usin
     - Select ***New registration***.  
     - Enter an application name in the ***Name*** field. 
     - Set ***Supported account types*** to ***Accounts in any organizational directory***. 
-    - Leave ***Redirect URI*** empty.  
+    - Leave ***Redirect URI*** `http://localhost`.  
     - Choose ***Register***.
 
 3. Configure Microsoft Graph
     - Under ***Manage***, select ***API permissions***.
     - Click ***Add a permission***, inside ***Request API permissions*** select ***Microsoft Graph***. 
     - Select the permission type ***Delegated permissions***
-    - Under ***Select Permissions*** type `user.read` which will select the appropriate scope. 
+    - Under ***Select Permissions*** type `User.Read` which will select the appropriate scope. 
     - Click ***Add permissions***.
 
 4. Congrats! Your app is successfully configured. In the next section, you'll need:
