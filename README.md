@@ -14,6 +14,12 @@ endpoint: AAD V1
 
 ![Build Badge](https://identitydivision.visualstudio.com/_apis/public/build/definitions/a7934fdd-dcde-4492-a406-7fad6ac00e17/506/badge)
 
+> There's a newer version of this sample! Check it out: https://github.com/azure-samples/ms-identity-android-native
+>
+> This newer sample takes advantage of the Microsoft identity platform (formerly Azure AD v2.0).
+>
+> While still in public preview, every component is supported in production environments
+
 The ADAL Android library gives your app the ability to begin using the
 [Microsoft Azure Cloud](https://cloud.microsoft.com) by supporting [Microsoft Azure Active Directory accounts](https://azure.microsoft.com/en-us/services/active-directory/) using industry standard OAuth2 and OpenID Connect. This sample demonstrates all the normal lifecycles your application should experience, including:
 
